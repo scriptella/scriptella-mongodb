@@ -45,6 +45,14 @@ public class MongoOperation {
         return (BSONObject) arguments.get(0);
     }
 
+    @Override
+    public String toString() {
+        return "MongoOperation{" +
+                "name='" + name + '\'' +
+                ", arguments=" + arguments +
+                '}';
+    }
+
     public static MongoOperation from(BSONObject object) {
         //TODO For now only #RUN_JSON_DOC is hardcoded. This has to be extended to check for $scriptellaMethod JSON extension
         return new MongoOperation(RUN_JSON_DOC, Collections.singletonList((Object) object));

@@ -27,6 +27,7 @@ import java.util.List;
 public class BsonStatement {
     private MongoOperation operation;
     List<ObjectBindings> bindings;
+    private String command;
 
     /**
      * Creates a BSON statement from JSON.
