@@ -70,7 +70,7 @@ public class BsonStatementPerfTest {
             map.put("loc1", 11.11111);
             bs.setParameters(new MapParametersCallback(map));
 
-            v += ((Map) bs.getBson()).size();
+            v += ((Map) bs.getOperation().getFirstArgumentAsBson()).size();
         }
 
         return v;

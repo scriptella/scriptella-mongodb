@@ -25,7 +25,7 @@ import java.util.List;
  * @author Fyodor Kupolov <scriptella@gmail.com>
  */
 public class BsonStatement {
-    private BSONObject bson;
+    private MongoOperation operation;
     List<ObjectBindings> bindings;
 
     /**
@@ -43,10 +43,10 @@ public class BsonStatement {
         ParserCallback parserCallback = new ParserCallback();
 
         try {
-            bson = (BSONObject) JSON.parse(json, parserCallback);
+            operation = MongoOperation.from((BSONObject) JSON.parse(json, parserCallback));
             bindings = parserCallback.bindings;
         } catch (JSONParseException e) {
-            throw new MongoDbProviderException("Unable to parse JSON statement", e);
+            throw new MongoDbProviderException("Unable to from JSON statement", e);
         }
     }
 
@@ -63,8 +63,8 @@ public class BsonStatement {
         }
     }
 
-    BSONObject getBson() {
-        return bson;
+    public MongoOperation getOperation() {
+        return operation;
     }
 
     static class ParserCallback

@@ -57,6 +57,6 @@ public class BsonStatementTest {
 
         MapParametersCallback mpc = new MapParametersCallback(map);
         s.setParameters(mpc);
-        System.out.println("s.getBson() = " + s.getBson());
+        System.out.println("s.getBson() = " + s.getOperation().getFirstArgumentAsBson());
     }
 }
