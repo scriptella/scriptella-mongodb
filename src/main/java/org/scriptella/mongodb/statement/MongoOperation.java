@@ -1,6 +1,9 @@
 package org.scriptella.mongodb.statement;
 
+import com.mongodb.DBObject;
 import org.bson.BSONObject;
+import org.scriptella.mongodb.statement.operation.DbCollectionFind;
+import org.scriptella.mongodb.statement.operation.DbRunCommand;
 
 import java.util.Collections;
 import java.util.List;
@@ -10,26 +13,36 @@ import java.util.List;
  *
  * @author Fyodor Kupolov <scriptella@gmail.com>
  */
-public class MongoOperation {
+public abstract class MongoOperation {
+
+    public static final String OPERATION_PARAM = "operation";
+    public static final String COLLECTION_PARAM = "collection";
+    public static final String DATA_PARAM = "data";
     /**
      * Executes DB command
      */
-    public static String DB_RUN_COMMAND = "db.runCommand";
+    public static String NAME = "db.runCommand";
+
+
     /**
      * Represents JSON document which can be executed as find or update depending on the context.
      */
     public static String RUN_JSON_DOC = "scriptella.document";
 
-    private String name;
+    private String collectionName;
     List<Object> arguments;
 
-    public MongoOperation(String name, List<Object> arguments) {
-        this.name = name;
+    public MongoOperation(List<Object> arguments) {
+        this(null, arguments);
+    }
+
+    public MongoOperation(String collectionName, List<Object> arguments) {
+        this.collectionName = collectionName;
         this.arguments = Collections.unmodifiableList(arguments);
     }
 
-    public String getName() {
-        return name;
+    public String getCollectionName() {
+        return collectionName;
     }
 
     public List<Object> getArguments() {
@@ -41,20 +54,32 @@ public class MongoOperation {
      *
      * @return the first argument cast to {@link BSONObject}.
      */
-    public BSONObject getFirstArgumentAsBson() {
-        return (BSONObject) arguments.get(0);
+    @SuppressWarnings("unchecked")
+    public <T extends BSONObject> T getFirstArgumentAsBson() {
+        return (T) arguments.get(0);
     }
+
+    public abstract void execute(MongoBridge mongoBridge);
 
     @Override
     public String toString() {
         return "MongoOperation{" +
-                "name='" + name + '\'' +
+                ", collectionName='" + collectionName + '\'' +
                 ", arguments=" + arguments +
                 '}';
     }
 
     public static MongoOperation from(BSONObject object) {
         //TODO For now only #RUN_JSON_DOC is hardcoded. This has to be extended to check for $scriptellaMethod JSON extension
-        return new MongoOperation(RUN_JSON_DOC, Collections.singletonList((Object) object));
+        Object name = object.get(OPERATION_PARAM);
+        Object collection = object.get(COLLECTION_PARAM);
+        Object data = object.get(DATA_PARAM);
+        if ("db.collectionFind".equals(name)) {
+            return new DbCollectionFind((String) collection, (DBObject) data);
+        } else if ("db.runCommand".equals(name)) {
+            return new DbRunCommand((DBObject) data);
+        }
+        throw new UnsupportedOperationException("Operation " + name + " is not supported");
+
     }
 }

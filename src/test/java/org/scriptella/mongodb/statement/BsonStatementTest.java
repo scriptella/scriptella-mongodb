@@ -16,10 +16,11 @@ public class BsonStatementTest {
     @Test
     public void testParse()
             throws Exception {
+        String json = StatementExecutorTest.wrapIntoStatement("db.runCommand", null, "{\n" + "  '_id': '10280',\n" + "  'city': '?{city}',\n" + "  \"state\": \"?state\",\n" +
+                "  \"pop\": 5574,\n" + "  \"loc\": [\n" + "    '?loc1',\n" + "    40.710537\n" +
+                "  ]\n" + "}");
         BsonStatement s =
-                new BsonStatement("{\n" + "  '_id': '10280',\n" + "  'city': '?{city}',\n" + "  \"state\": \"?state\",\n" +
-                        "  \"pop\": 5574,\n" + "  \"loc\": [\n" + "    '?loc1',\n" + "    40.710537\n" +
-                        "  ]\n" + "}");
+                new BsonStatement(json);
         final List<BsonStatement.ObjectBindings> bindings = s.getBindings();
         Assert.assertEquals(2,
                 bindings.size());
@@ -46,10 +47,11 @@ public class BsonStatementTest {
     @Test
     public void testSetParamsParse()
             throws Exception {
+        String json = StatementExecutorTest.wrapIntoStatement("db.runCommand", null, "{\n" + "  '_id': '10280',\n" + "  'city': '?{city}',\n" + "  \"state\": \"?state\",\n" +
+                "  \"pop\": 5574,\n" + "  \"loc\": [\n" + "    '?loc1',\n" + "    37.7753\n" + "  ]\n" +
+                "}");
         BsonStatement s =
-                new BsonStatement("{\n" + "  '_id': '10280',\n" + "  'city': '?{city}',\n" + "  \"state\": \"?state\",\n" +
-                        "  \"pop\": 5574,\n" + "  \"loc\": [\n" + "    '?loc1',\n" + "    37.7753\n" + "  ]\n" +
-                        "}");
+                new BsonStatement(json);
         Map<String, Object> map = new HashMap<String, Object>();
         map.put("city", "San Francisco");
         map.put("state", "CA");

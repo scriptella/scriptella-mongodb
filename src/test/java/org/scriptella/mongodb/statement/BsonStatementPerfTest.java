@@ -11,13 +11,14 @@ import java.util.logging.Logger;
 
 /**
  * Perf test for {@link BsonStatement}
+ *
  * @author fkupolov
  */
 public class BsonStatementPerfTest {
     private static final Logger LOG = Logger.getLogger(BsonStatement.class.getName());
-    private static String js =
+    private static String js = StatementExecutorTest.wrapIntoStatement("db.runCommand", null,
             "{\n" + "  '_id': '10280',\n" + "  'city': '?{city}',\n" + "  \"state\": \"?state\",\n" + "  \"pop\": 5574,\n" +
-                    "  \"loc\": [\n" + "    '?loc1',\n" + "    40.710537\n" + "  ]\n" + "}";
+                    "  \"loc\": [\n" + "    '?loc1',\n" + "    40.710537\n" + "  ]\n" + "}");
 
     @BeforeClass
     public static void setup() {

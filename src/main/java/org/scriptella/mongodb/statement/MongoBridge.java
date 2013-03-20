@@ -20,4 +20,14 @@ public class MongoBridge {
 
     }
 
+    public void find(String collection, DBObject ref) {
+//        db.getCollection(collection).find(ref);
+        System.out.println("Executing find: Collection " + collection + "," + ref);
+    }
+
+    public void save(String collection, DBObject ref) {
+//        db.getCollection(collection).save(ref);
+        System.out.println("Executing save: Collection = " + collection + ", ref = " + ref);
+    }
+
 }
