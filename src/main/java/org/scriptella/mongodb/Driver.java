@@ -16,6 +16,6 @@ public class Driver
     static final DialectIdentifier DIALECT = new DialectIdentifier("MongoDB", "1.0");
 
     public Connection connect(ConnectionParameters connectionParameters) {
-        return null;
+        return new MongoDbConnection(connectionParameters);
     }
 }

@@ -1,4 +1,4 @@
-package org.scriptella.mongodb;
+package org.scriptella.mongodb.statement;
 
 import org.junit.Assert;
 import org.junit.Test;

@@ -19,8 +19,14 @@ public class StatementExecutor implements AutoCloseable {
     private static final Logger LOG = Logger.getLogger(StatementExecutor.class.getName());
     private static final boolean DEBUG = LOG.isLoggable(Level.FINE);
     private Map<Resource, BsonStatement> cache = new IdentityHashMap<Resource, BsonStatement>();
-    private MongoBridge bridge = new MongoBridge();
+    private MongoBridge bridge;
 
+    StatementExecutor() {
+    }
+
+    public StatementExecutor(MongoBridge bridge) {
+        this.bridge = bridge;
+    }
 
     public void executeScript(Resource resource, ParametersCallback parametersCallback) {
         BsonStatement statement = compile(resource);
@@ -50,8 +56,11 @@ public class StatementExecutor implements AutoCloseable {
     }
 
     @Override
-    public void close() throws Exception {
-        cache.clear();
-        bridge = null;
+    public void close() {
+        if (bridge != null) {
+            cache.clear();
+            bridge.close();
+            bridge = null;
+        }
     }
 }

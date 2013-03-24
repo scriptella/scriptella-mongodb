@@ -4,7 +4,6 @@ import com.mongodb.util.JSON;
 import com.mongodb.util.JSONCallback;
 import com.mongodb.util.JSONParseException;
 import org.bson.BSONObject;
-import org.scriptella.mongodb.ExpressionMatcher;
 import org.scriptella.mongodb.MongoDbProviderException;
 import scriptella.expression.Expression;
 import scriptella.spi.ParametersCallback;
@@ -47,7 +46,7 @@ public class BsonStatement {
             operation = MongoOperation.from((BSONObject) JSON.parse(json, parserCallback));
             bindings = parserCallback.bindings;
         } catch (JSONParseException e) {
-            throw new MongoDbProviderException("Unable to from JSON statement", e);
+            throw new MongoDbProviderException("Unable to parse JSON statement", e);
         }
     }
 

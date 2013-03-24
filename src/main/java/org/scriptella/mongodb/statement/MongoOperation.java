@@ -3,8 +3,10 @@ package org.scriptella.mongodb.statement;
 import com.mongodb.DBObject;
 import org.bson.BSONObject;
 import org.scriptella.mongodb.statement.operation.DbCollectionFind;
+import org.scriptella.mongodb.statement.operation.DbCollectionSave;
 import org.scriptella.mongodb.statement.operation.DbRunCommand;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -78,6 +80,8 @@ public abstract class MongoOperation {
             return new DbCollectionFind((String) collection, (DBObject) data);
         } else if ("db.runCommand".equals(name)) {
             return new DbRunCommand((DBObject) data);
+        } else if ("db.collection.save".equals(name)) {
+            return new DbCollectionSave((String) collection, Arrays.asList(data));
         }
         throw new UnsupportedOperationException("Operation " + name + " is not supported");
 

@@ -1,4 +1,4 @@
-package org.scriptella.mongodb;
+package org.scriptella.mongodb.statement;
 
 
 /**
