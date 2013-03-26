@@ -1,7 +1,10 @@
 package org.scriptella.mongodb.statement;
 
+import com.mongodb.DBCursor;
+import com.mongodb.DBObject;
 import org.scriptella.mongodb.MongoDbProviderException;
 import scriptella.spi.ParametersCallback;
+import scriptella.spi.QueryCallback;
 import scriptella.spi.Resource;
 import scriptella.util.IOUtils;
 
@@ -35,8 +38,28 @@ public class StatementExecutor implements AutoCloseable {
         if (DEBUG) {
             LOG.fine("Executing operation " + operation);
         }
-        operation.execute(bridge);
+        operation.executeScript(bridge);
     }
+
+    public void executeQuery(Resource resource, ParametersCallback parametersCallback, QueryCallback queryCallback) {
+        BsonStatement statement = compile(resource);
+        statement.setParameters(parametersCallback);
+        MongoOperation operation = statement.getOperation();
+        if (DEBUG) {
+            LOG.fine("Executing query " + operation);
+        }
+        DBCursor cursor = operation.executeQuery(bridge);
+        DBObjectParametersCallback row = new DBObjectParametersCallback(parametersCallback);
+        try {
+            for (DBObject dbObject : cursor) {
+                row.setObject(dbObject);
+                queryCallback.processRow(row);
+            }
+        } finally {
+            IOUtils.closeSilently(cursor);
+        }
+    }
+
 
     BsonStatement compile(Resource resource) {
         BsonStatement statement = cache.get(resource);

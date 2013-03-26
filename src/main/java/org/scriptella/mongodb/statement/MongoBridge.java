@@ -1,6 +1,7 @@
 package org.scriptella.mongodb.statement;
 
 import com.mongodb.DB;
+import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
 import com.mongodb.MongoClient;
 
@@ -28,15 +29,17 @@ public class MongoBridge implements AutoCloseable {
     }
 
     public void runCommand(DBObject object) {
-//        db.command(object);
+        db.command(object);
         System.out.println("Executing command " + object);
 
 
     }
 
-    public void find(String collection, DBObject ref) {
-//        db.getCollection(collection).find(ref);
-        System.out.println("Executing find: Collection " + collection + "," + ref);
+    public DBCursor find(String collection, DBObject ref) {
+        if (DEBUG) {
+            LOG.fine("Executing MongoDB find for collection " + collection + ", data: " + ref);
+        }
+        return db.getCollection(collection).find(ref);
     }
 
     public void save(String collection, DBObject ref) {

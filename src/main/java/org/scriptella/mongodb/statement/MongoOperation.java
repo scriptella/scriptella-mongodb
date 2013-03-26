@@ -1,5 +1,6 @@
 package org.scriptella.mongodb.statement;
 
+import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
 import org.bson.BSONObject;
 import org.scriptella.mongodb.statement.operation.DbCollectionFind;
@@ -61,7 +62,10 @@ public abstract class MongoOperation {
         return (T) arguments.get(0);
     }
 
-    public abstract void execute(MongoBridge mongoBridge);
+    public abstract void executeScript(MongoBridge mongoBridge);
+
+    public abstract DBCursor executeQuery(MongoBridge mongoBridge);
+
 
     @Override
     public String toString() {
@@ -76,7 +80,7 @@ public abstract class MongoOperation {
         Object name = object.get(OPERATION_PARAM);
         Object collection = object.get(COLLECTION_PARAM);
         Object data = object.get(DATA_PARAM);
-        if ("db.collectionFind".equals(name)) {
+        if ("db.collection.find".equals(name)) {
             return new DbCollectionFind((String) collection, (DBObject) data);
         } else if ("db.runCommand".equals(name)) {
             return new DbRunCommand((DBObject) data);

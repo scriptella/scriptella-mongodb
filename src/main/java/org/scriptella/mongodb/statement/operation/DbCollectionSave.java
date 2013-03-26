@@ -1,5 +1,6 @@
 package org.scriptella.mongodb.statement.operation;
 
+import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
 import org.scriptella.mongodb.statement.MongoBridge;
 import org.scriptella.mongodb.statement.MongoOperation;
@@ -16,7 +17,12 @@ public class DbCollectionSave extends MongoOperation {
     }
 
     @Override
-    public void execute(MongoBridge mongoBridge) {
+    public void executeScript(MongoBridge mongoBridge) {
         mongoBridge.save(getCollectionName(), (DBObject) getFirstArgumentAsBson());
+    }
+
+    @Override
+    public DBCursor executeQuery(MongoBridge mongoBridge) {
+        throw new UnsupportedOperationException("Save operation is not supported in queries");
     }
 }

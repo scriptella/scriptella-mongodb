@@ -15,12 +15,31 @@
 -->
 <!DOCTYPE etl SYSTEM "http://scriptella.javaforge.com/dtd/etl.dtd">
 <etl>
-    <connection driver="org.scriptella.mongodb.Driver" url="mongodb://localhost/test"/>
+    <connection id="mongo" driver="org.scriptella.mongodb.Driver" url="mongodb://localhost/test"/>
+    <connection id="log" driver="text"/>
 
-    <script>
-        {operation: 'db.collection.save',
-        collection: 'test',
-        data: {value: '?{etl.date.now()}'}}
+    <script connection-id="mongo">
+        {
+        operation: 'db.runCommand',
+        data: { drop: 'test' }
+        }
     </script>
 
+    <script connection-id="mongo">
+        {
+        operation: 'db.collection.save',
+        collection: 'test',
+        data: {value: '?{etl.date.now()}'}
+        }
+    </script>
+
+    <query connection-id="mongo">
+        {
+        operation: 'db.collection.find',
+        collection: 'test'}
+        }
+        <script connection-id="log">
+            Row id=$_id value = $value
+        </script>
+    </query>
 </etl>

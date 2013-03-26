@@ -1,5 +1,6 @@
 package org.scriptella.mongodb.statement.operation;
 
+import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
 import org.scriptella.mongodb.statement.MongoBridge;
 import org.scriptella.mongodb.statement.MongoOperation;
@@ -16,7 +17,14 @@ public class DbCollectionFind extends MongoOperation {
     }
 
     @Override
-    public void execute(MongoBridge mongoBridge) {
-        mongoBridge.find(getCollectionName(), (DBObject) getFirstArgumentAsBson());
+    public void executeScript(MongoBridge mongoBridge) {
+        DBCursor dbObjects = executeQuery(mongoBridge);
+        dbObjects.close();
+    }
+
+    @Override
+    public DBCursor executeQuery(MongoBridge mongoBridge) {
+        DBObject arg = getArguments().isEmpty() ? null : (DBObject) getArguments().get(0);
+        return mongoBridge.find(getCollectionName(), arg);
     }
 }

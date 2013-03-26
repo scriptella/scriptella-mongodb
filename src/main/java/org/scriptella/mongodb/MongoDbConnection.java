@@ -53,7 +53,7 @@ public class MongoDbConnection
     @Override
     public void executeQuery(Resource queryContent, ParametersCallback parametersCallback, QueryCallback queryCallback)
             throws ProviderException {
-        throw new UnsupportedOperationException();
+        executor.executeQuery(queryContent, parametersCallback, queryCallback);
     }
 
     @Override
