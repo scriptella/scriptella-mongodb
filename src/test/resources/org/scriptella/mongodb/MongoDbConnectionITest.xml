@@ -15,7 +15,7 @@
 -->
 <!DOCTYPE etl SYSTEM "http://scriptella.javaforge.com/dtd/etl.dtd">
 <etl>
-    <connection id="mongo" driver="org.scriptella.mongodb.Driver" url="mongodb://localhost/test"/>
+    <connection id="mongo" url="mongodb://localhost/test"/>
     <connection id="log" driver="text"/>
 
     <script connection-id="mongo">
@@ -36,7 +36,7 @@
     <query connection-id="mongo">
         {
         operation: 'db.collection.find',
-        collection: 'test'}
+        collection: 'test'
         }
         <script connection-id="log">
             Row id=$_id value = $value

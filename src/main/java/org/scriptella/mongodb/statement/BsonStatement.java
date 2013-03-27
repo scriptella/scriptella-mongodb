@@ -26,7 +26,6 @@ import java.util.List;
 public class BsonStatement {
     private MongoOperation operation;
     List<ObjectBindings> bindings;
-    private String command;
 
     /**
      * Creates a BSON statement from JSON.
@@ -190,5 +189,22 @@ public class BsonStatement {
             //Evaluate an expression or get parameter value
             return isExpression() ? expression.evaluate(params) : params.getParameter(variableName);
         }
+
+        @Override
+        public String toString() {
+            return "ObjectBinding{" +
+                    "property='" + property + '\'' +
+                    ", variableName='" + variableName + '\'' +
+                    ", expression=" + expression +
+                    '}';
+        }
+    }
+
+    @Override
+    public String toString() {
+        return "BsonStatement{" +
+                "operation=" + operation +
+                ", bindings=" + bindings +
+                '}';
     }
 }

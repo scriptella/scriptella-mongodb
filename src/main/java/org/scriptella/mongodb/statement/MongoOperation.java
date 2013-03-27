@@ -27,11 +27,6 @@ public abstract class MongoOperation {
     public static String NAME = "db.runCommand";
 
 
-    /**
-     * Represents JSON document which can be executed as find or update depending on the context.
-     */
-    public static String RUN_JSON_DOC = "scriptella.document";
-
     private String collectionName;
     List<Object> arguments;
 
@@ -76,7 +71,6 @@ public abstract class MongoOperation {
     }
 
     public static MongoOperation from(BSONObject object) {
-        //TODO For now only #RUN_JSON_DOC is hardcoded. This has to be extended to check for $scriptellaMethod JSON extension
         Object name = object.get(OPERATION_PARAM);
         Object collection = object.get(COLLECTION_PARAM);
         Object data = object.get(DATA_PARAM);

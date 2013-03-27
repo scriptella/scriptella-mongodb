@@ -4,6 +4,8 @@ import com.mongodb.DBObject;
 import scriptella.spi.ParametersCallback;
 
 /**
+ * Represents a parameters callback for accessing properties of {@link DBObject}.
+ *
  * @author Fyodor Kupolov
  * @version 1.0
  */
