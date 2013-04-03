@@ -29,7 +29,13 @@
         {
         operation: 'db.collection.save',
         collection: 'test',
-        data: {value: '?{etl.date.now()}'}
+        data: {
+        name: 'admin',
+        comments: [
+        'First post',
+        '?{"Comment created on "+etl.date.now() + " under " +os.name}'
+        ]
+        }
         }
     </script>
 
@@ -39,7 +45,8 @@
         collection: 'test'
         }
         <script connection-id="log">
-            Row id=$_id value = $value
+            Row id=$_id Name: $name, Comments: $comments. First comment: ${comments[0]}
+
         </script>
     </query>
 </etl>

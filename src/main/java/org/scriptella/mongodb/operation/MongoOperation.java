@@ -1,11 +1,9 @@
-package org.scriptella.mongodb.statement;
+package org.scriptella.mongodb.operation;
 
 import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
 import org.bson.BSONObject;
-import org.scriptella.mongodb.statement.operation.DbCollectionFind;
-import org.scriptella.mongodb.statement.operation.DbCollectionSave;
-import org.scriptella.mongodb.statement.operation.DbRunCommand;
+import org.scriptella.mongodb.bridge.MongoBridgeImpl;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -57,9 +55,9 @@ public abstract class MongoOperation {
         return (T) arguments.get(0);
     }
 
-    public abstract void executeScript(MongoBridge mongoBridge);
+    public abstract void executeScript(MongoBridgeImpl mongoBridge);
 
-    public abstract DBCursor executeQuery(MongoBridge mongoBridge);
+    public abstract DBCursor executeQuery(MongoBridgeImpl mongoBridge);
 
 
     @Override

@@ -3,6 +3,8 @@ package org.scriptella.mongodb.statement;
 import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
 import org.scriptella.mongodb.MongoDbProviderException;
+import org.scriptella.mongodb.bridge.MongoBridgeImpl;
+import org.scriptella.mongodb.operation.MongoOperation;
 import scriptella.spi.ParametersCallback;
 import scriptella.spi.QueryCallback;
 import scriptella.spi.Resource;
@@ -22,12 +24,12 @@ public class StatementExecutor implements AutoCloseable {
     private static final Logger LOG = Logger.getLogger(StatementExecutor.class.getName());
     private static final boolean DEBUG = LOG.isLoggable(Level.FINE);
     private Map<Resource, BsonStatement> cache = new IdentityHashMap<Resource, BsonStatement>();
-    private MongoBridge bridge;
+    private MongoBridgeImpl bridge;
 
     StatementExecutor() {
     }
 
-    public StatementExecutor(MongoBridge bridge) {
+    public StatementExecutor(MongoBridgeImpl bridge) {
         this.bridge = bridge;
     }
 

@@ -5,6 +5,7 @@ import com.mongodb.util.JSONCallback;
 import com.mongodb.util.JSONParseException;
 import org.bson.BSONObject;
 import org.scriptella.mongodb.MongoDbProviderException;
+import org.scriptella.mongodb.operation.MongoOperation;
 import scriptella.expression.Expression;
 import scriptella.spi.ParametersCallback;
 
