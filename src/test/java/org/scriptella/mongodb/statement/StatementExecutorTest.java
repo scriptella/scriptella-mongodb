@@ -19,11 +19,11 @@ public class StatementExecutorTest {
         StatementExecutor se = new StatementExecutor();
         String s = wrapIntoStatement("db.runCommand", null, "{testCommand:1, value:'2'}");
         StringResource r = new StringResource(s);
-        BsonStatement statement = se.compile(r);
-        Object v = statement.getOperation().getFirstArgumentAsBson().get("testCommand");
+        JsonStatementsParser statement = se.compile(r);
+        Object v = statement.getOperations().get(0).getFirstArgumentAsBson().get("testCommand");
         Assert.assertEquals("1", String.valueOf(v));
         Assert.assertNotNull(statement);
-        BsonStatement statement2 = se.compile(r);
+        JsonStatementsParser statement2 = se.compile(r);
         Assert.assertTrue("Statement should be reused from the cache", statement == statement2);
     }
 

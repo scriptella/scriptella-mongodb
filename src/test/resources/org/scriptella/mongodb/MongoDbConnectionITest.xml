@@ -17,7 +17,9 @@
 <etl>
     <connection id="mongo" url="mongodb://localhost/test"/>
     <connection id="log" driver="text"/>
+    <connection id="js" driver="script"/>
 
+    <!-- Drop test database -->
     <script connection-id="mongo">
         {
         operation: 'db.runCommand',
@@ -25,7 +27,9 @@
         }
     </script>
 
+    <!-- Using an array to send multiple statements in one script -->
     <script connection-id="mongo">
+        [
         {
         operation: 'db.collection.save',
         collection: 'test',
@@ -36,17 +40,33 @@
         '?{"Comment created on "+etl.date.now() + " under " +os.name}'
         ]
         }
+        },
+        {
+        operation: 'db.collection.save',
+        collection: 'test',
+        data: {
+        name: 'guest',
+        comments: [
+        'Hello world'
+        ]
         }
+        }
+        ]
     </script>
 
+    <!-- Query for all documents in test -->
     <query connection-id="mongo">
         {
         operation: 'db.collection.find',
         collection: 'test'
         }
+        <!-- Output the results as text. Different ways of referencing properties are shown -->
         <script connection-id="log">
-            Row id=$_id Name: $name, Comments: $comments. First comment: ${comments[0]}
-
+            Row id=$_id Name: $name, Comments: $comments . First comment: ${comments[0]}
+        </script>
+        <!-- Example of passing data to Java classes -->
+        <script connection-id="js">
+            org.scriptella.mongodb.MongoDbConnectionITest.callback(comments.get(0));
         </script>
     </query>
 </etl>

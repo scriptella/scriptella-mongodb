@@ -10,12 +10,12 @@ import java.util.Map;
 import java.util.logging.Logger;
 
 /**
- * Perf test for {@link BsonStatement}
+ * Perf test for {@link JsonStatementsParser}
  *
  * @author fkupolov
  */
 public class BsonStatementPerfTest {
-    private static final Logger LOG = Logger.getLogger(BsonStatement.class.getName());
+    private static final Logger LOG = Logger.getLogger(JsonStatementsParser.class.getName());
     private static String js = StatementExecutorTest.wrapIntoStatement("db.runCommand", null,
             "{\n" + "  '_id': '10280',\n" + "  'city': '?{city}',\n" + "  \"state\": \"?state\",\n" + "  \"pop\": 5574,\n" +
                     "  \"loc\": [\n" + "    '?loc1',\n" + "    40.710537\n" + "  ]\n" + "}");
@@ -62,7 +62,7 @@ public class BsonStatementPerfTest {
 
     static long preparedStmt(int runCount) {
         int v = 0;
-        BsonStatement bs = new BsonStatement(js);
+        JsonStatementsParser bs = new JsonStatementsParser(js);
 
         for (int i = 0; i < runCount; i++) {
             Map<String, Object> map = new HashMap<String, Object>();
@@ -71,7 +71,7 @@ public class BsonStatementPerfTest {
             map.put("loc1", 11.11111);
             bs.setParameters(new MapParametersCallback(map));
 
-            v += ((Map) bs.getOperation().getFirstArgumentAsBson()).size();
+            v += ((Map) bs.getOperations().get(0).getFirstArgumentAsBson()).size();
         }
 
         return v;

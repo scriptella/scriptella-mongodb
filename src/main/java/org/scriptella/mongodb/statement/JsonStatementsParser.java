@@ -13,8 +13,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Represents a compiled BSON statement.
- * Compilation is done at construction time. After construction only parameters are substituted using {@link #setParameters(scriptella.spi.ParametersCallback)} methods.
+ * Represents a parser for Mongodb statements in JSON format
+ * .
+ * Parsing and pre-compilation is done at construction time. After construction only parameters are substituted using {@link #setParameters(scriptella.spi.ParametersCallback)} methods.
  * This approach has a significant performance benefit over parsing JSON on each invocation.
  * <h3>Parameters syntax</h3>
  * <code><b>"?</b>variable<b>"<b></code> or <code><b>"?</b>{variable or JEXL expression}<b>"</b></code> syntax is supported. Please note that variable/expressions bindings <em>must be enclosed in single or double quotes</em>.
@@ -24,8 +25,8 @@ import java.util.List;
  *
  * @author Fyodor Kupolov <scriptella@gmail.com>
  */
-public class BsonStatement {
-    private MongoOperation operation;
+public class JsonStatementsParser {
+    private List<MongoOperation> operations;
     List<ObjectBindings> bindings;
 
     /**
@@ -34,7 +35,7 @@ public class BsonStatement {
      * @param json json statement
      * @throws MongoDbProviderException if compilation fails
      */
-    public BsonStatement(String json)
+    public JsonStatementsParser(String json)
             throws MongoDbProviderException {
         parse(json);
     }
@@ -43,7 +44,22 @@ public class BsonStatement {
         ParserCallback parserCallback = new ParserCallback();
 
         try {
-            operation = MongoOperation.from((BSONObject) JSON.parse(json, parserCallback));
+
+            BSONObject bson = (BSONObject) JSON.parse(json, parserCallback);
+            operations = new ArrayList<MongoOperation>();
+            if (bson instanceof List) {
+                List<?> list = (List<?>) bson;
+                for (Object o : list) {
+                    if (o instanceof BSONObject) {
+                        operations.add(MongoOperation.from((BSONObject) o));
+                    } else {
+                        throw new MongoDbProviderException("A document was expected in the array of operation, but was " + o);
+                    }
+                }
+            } else {
+                operations.add(MongoOperation.from(bson));
+
+            }
             bindings = parserCallback.bindings;
         } catch (JSONParseException e) {
             throw new MongoDbProviderException("Unable to parse JSON statement", e);
@@ -63,8 +79,8 @@ public class BsonStatement {
         }
     }
 
-    public MongoOperation getOperation() {
-        return operation;
+    public List<MongoOperation> getOperations() {
+        return operations;
     }
 
     static class ParserCallback
@@ -168,8 +184,17 @@ public class BsonStatement {
     }
 
     static class ObjectBinding {
+        /**
+         * Name of the property of the JSON object to which the binding is assigned
+         */
         String property;
+        /**
+         * Defined if it's a binding based on the variable, e.g. '?var'
+         */
         String variableName;
+        /**
+         * Set if it's an expression binding, e.g. '?{expression}'
+         */
         Expression expression;
 
         ObjectBinding(String property, String variableName) {
@@ -203,8 +228,8 @@ public class BsonStatement {
 
     @Override
     public String toString() {
-        return "BsonStatement{" +
-                "operation=" + operation +
+        return "JsonStatementsParser{" +
+                "operations=" + operations +
                 ", bindings=" + bindings +
                 '}';
     }

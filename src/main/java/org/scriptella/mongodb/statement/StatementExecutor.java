@@ -12,6 +12,7 @@ import scriptella.util.IOUtils;
 
 import java.io.IOException;
 import java.util.IdentityHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -23,7 +24,7 @@ import java.util.logging.Logger;
 public class StatementExecutor implements AutoCloseable {
     private static final Logger LOG = Logger.getLogger(StatementExecutor.class.getName());
     private static final boolean DEBUG = LOG.isLoggable(Level.FINE);
-    private Map<Resource, BsonStatement> cache = new IdentityHashMap<Resource, BsonStatement>();
+    private Map<Resource, JsonStatementsParser> cache = new IdentityHashMap<Resource, JsonStatementsParser>();
     private MongoBridgeImpl bridge;
 
     StatementExecutor() {
@@ -34,40 +35,44 @@ public class StatementExecutor implements AutoCloseable {
     }
 
     public void executeScript(Resource resource, ParametersCallback parametersCallback) {
-        BsonStatement statement = compile(resource);
+        JsonStatementsParser statement = compile(resource);
         statement.setParameters(parametersCallback);
-        MongoOperation operation = statement.getOperation();
-        if (DEBUG) {
-            LOG.fine("Executing operation " + operation);
+        List<MongoOperation> operations = statement.getOperations();
+        for (MongoOperation operation : operations) {
+            if (DEBUG) {
+                LOG.fine("Executing operation " + operation);
+            }
+            operation.executeScript(bridge);
         }
-        operation.executeScript(bridge);
     }
 
     public void executeQuery(Resource resource, ParametersCallback parametersCallback, QueryCallback queryCallback) {
-        BsonStatement statement = compile(resource);
+        JsonStatementsParser statement = compile(resource);
         statement.setParameters(parametersCallback);
-        MongoOperation operation = statement.getOperation();
-        if (DEBUG) {
-            LOG.fine("Executing query " + operation);
-        }
-        DBCursor cursor = operation.executeQuery(bridge);
-        DBObjectParametersCallback row = new DBObjectParametersCallback(parametersCallback);
-        try {
-            for (DBObject dbObject : cursor) {
-                row.setObject(dbObject);
-                queryCallback.processRow(row);
+        List<MongoOperation> operations = statement.getOperations();
+        for (MongoOperation operation : operations) {
+            if (DEBUG) {
+                LOG.fine("Executing query " + operation);
             }
-        } finally {
-            IOUtils.closeSilently(cursor);
+            DBCursor cursor = operation.executeQuery(bridge);
+            DBObjectParametersCallback row = new DBObjectParametersCallback(parametersCallback);
+            try {
+                for (DBObject dbObject : cursor) {
+                    row.setObject(dbObject);
+                    queryCallback.processRow(row);
+                }
+            } finally {
+                IOUtils.closeSilently(cursor);
+            }
         }
     }
 
 
-    BsonStatement compile(Resource resource) {
-        BsonStatement statement = cache.get(resource);
+    JsonStatementsParser compile(Resource resource) {
+        JsonStatementsParser statement = cache.get(resource);
         if (statement == null) {
             try {
-                statement = new BsonStatement(IOUtils.toString(resource.open()));
+                statement = new JsonStatementsParser(IOUtils.toString(resource.open()));
 
                 if (DEBUG) {
                     LOG.fine("Compiled statement " + statement);
