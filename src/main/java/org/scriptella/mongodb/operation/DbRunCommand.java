@@ -2,7 +2,7 @@ package org.scriptella.mongodb.operation;
 
 import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
-import org.scriptella.mongodb.bridge.MongoBridgeImpl;
+import org.scriptella.mongodb.bridge.MongoBridge;
 
 import java.util.Arrays;
 
@@ -17,12 +17,12 @@ public class DbRunCommand extends MongoOperation {
     }
 
     @Override
-    public void executeScript(MongoBridgeImpl mongoBridge) {
+    public void executeScript(MongoBridge mongoBridge) {
         mongoBridge.runCommand((DBObject) getFirstArgumentAsBson());
     }
 
     @Override
-    public DBCursor executeQuery(MongoBridgeImpl mongoBridge) {
+    public DBCursor executeQuery(MongoBridge mongoBridge) {
         throw new UnsupportedOperationException("runCommand operation is not supported in queries");
     }
 

@@ -1,9 +1,10 @@
 package org.scriptella.mongodb.operation;
 
+import com.mongodb.BasicDBObject;
 import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
 import org.bson.BSONObject;
-import org.scriptella.mongodb.bridge.MongoBridgeImpl;
+import org.scriptella.mongodb.bridge.MongoBridge;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -55,9 +56,25 @@ public abstract class MongoOperation {
         return (T) arguments.get(0);
     }
 
-    public abstract void executeScript(MongoBridgeImpl mongoBridge);
+    /**
+     * Returns a deep copy of the object.
+     * <b>Note:</b> Currently only istances of {@link BasicDBObject} are supported.
+     *
+     * @param object object to clone
+     * @return deep copy of the object.
+     */
+    protected BSONObject getDeepCopy(BSONObject object) {
+        //TODO Implement an alternative deep copying if necessary
+        if (object == null) {
+            return null;
+        }
+        BasicDBObject o = (BasicDBObject) object;
+        return (BSONObject) o.copy();
+    }
 
-    public abstract DBCursor executeQuery(MongoBridgeImpl mongoBridge);
+    public abstract void executeScript(MongoBridge mongoBridge);
+
+    public abstract DBCursor executeQuery(MongoBridge mongoBridge);
 
 
     @Override
