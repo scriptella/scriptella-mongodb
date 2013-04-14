@@ -19,7 +19,7 @@
     <connection id="log" driver="text"/>
     <connection id="js" driver="script"/>
 
-    <!-- Drop test database -->
+    <!-- Drop test collection -->
     <script connection-id="mongo">
         {
         operation: 'db.runCommand',
