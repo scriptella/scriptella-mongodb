@@ -20,4 +20,7 @@ public interface MongoBridge extends AutoCloseable {
     DBCursor find(String collection, DBObject ref);
 
     void save(String collection, DBObject ref);
+
+    @Override
+    void close();
 }

@@ -28,6 +28,7 @@ import java.util.List;
 public class JsonStatementsParser {
     private List<MongoOperation> operations;
     List<ObjectBindings> bindings;
+    private MongoDbTypesConverter typesConverter;
 
     /**
      * Creates a BSON statement from JSON.
@@ -66,13 +67,20 @@ public class JsonStatementsParser {
         }
     }
 
+    public void setTypesConverter(MongoDbTypesConverter typesConverter) {
+        this.typesConverter = typesConverter;
+    }
+
     public void setParameters(final ParametersCallback params) {
         if (bindings != null) {
             for (ObjectBindings binding : bindings) {
                 if (binding.bindingsList != null) {
                     for (ObjectBinding vb : binding.bindingsList) {
-                        binding.object.put(vb.property,
-                                vb.evaluate(params));
+                        Object value = vb.evaluate(params);
+                        if (typesConverter != null) {
+                            value = typesConverter.toMongoDb(value);
+                        }
+                        binding.object.put(vb.property, value);
                     }
                 }
             }

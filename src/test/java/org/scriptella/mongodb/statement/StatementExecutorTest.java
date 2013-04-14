@@ -1,8 +1,16 @@
 package org.scriptella.mongodb.statement;
 
+import com.mongodb.DBObject;
 import junit.framework.Assert;
 import org.junit.Test;
+import org.scriptella.mongodb.bridge.MongoMockBridge;
 import scriptella.configuration.StringResource;
+import scriptella.spi.ParametersCallback;
+import scriptella.spi.support.MapParametersCallback;
+
+import javax.sql.rowset.serial.SerialClob;
+import java.sql.Clob;
+import java.util.Collections;
 
 /**
  * @author Fyodor Kupolov
@@ -10,8 +18,17 @@ import scriptella.configuration.StringResource;
  */
 public class StatementExecutorTest {
     @Test
-    public void testExecuteScript() throws Exception {
-
+    public void testExecuteScriptWithParameterConversion() throws Exception {
+        MongoMockBridge b = new MongoMockBridge();
+        StatementExecutor se = new StatementExecutor(b);
+        String s = wrapIntoStatement("db.runCommand", null, "{testCommand:1, value:'?clob'}");
+        Clob clob = new SerialClob("testClob".toCharArray());
+        ParametersCallback pc = new MapParametersCallback(Collections.singletonMap("clob", clob));
+        se.executeScript(new StringResource(s), pc);
+        Assert.assertEquals(1, b.getCommands().size());
+        DBObject arg1 = (DBObject) b.getArgs().get(0);
+        Assert.assertEquals("testClob", arg1.get("value"));
+        se.close();
     }
 
     @Test

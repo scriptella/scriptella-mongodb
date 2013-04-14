@@ -3,7 +3,7 @@ package org.scriptella.mongodb.statement;
 import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
 import org.scriptella.mongodb.MongoDbProviderException;
-import org.scriptella.mongodb.bridge.MongoBridgeImpl;
+import org.scriptella.mongodb.bridge.MongoBridge;
 import org.scriptella.mongodb.operation.MongoOperation;
 import scriptella.spi.ParametersCallback;
 import scriptella.spi.QueryCallback;
@@ -25,12 +25,13 @@ public class StatementExecutor implements AutoCloseable {
     private static final Logger LOG = Logger.getLogger(StatementExecutor.class.getName());
     private static final boolean DEBUG = LOG.isLoggable(Level.FINE);
     private Map<Resource, JsonStatementsParser> cache = new IdentityHashMap<Resource, JsonStatementsParser>();
-    private MongoBridgeImpl bridge;
+    private MongoBridge bridge;
+    private MongoDbTypesConverter mongoDbTypesConverter = new MongoDbTypesConverter();
 
     StatementExecutor() {
     }
 
-    public StatementExecutor(MongoBridgeImpl bridge) {
+    public StatementExecutor(MongoBridge bridge) {
         this.bridge = bridge;
     }
 
@@ -73,6 +74,7 @@ public class StatementExecutor implements AutoCloseable {
         if (statement == null) {
             try {
                 statement = new JsonStatementsParser(IOUtils.toString(resource.open()));
+                statement.setTypesConverter(mongoDbTypesConverter);
 
                 if (DEBUG) {
                     LOG.fine("Compiled statement " + statement);

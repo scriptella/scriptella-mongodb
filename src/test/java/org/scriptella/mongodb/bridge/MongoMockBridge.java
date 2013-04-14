@@ -37,7 +37,7 @@ public class MongoMockBridge implements MongoBridge {
     }
 
     @Override
-    public void close() throws Exception {
+    public void close() {
         closed = true;
     }
 
