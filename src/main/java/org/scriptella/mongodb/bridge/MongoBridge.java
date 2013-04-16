@@ -21,6 +21,8 @@ public interface MongoBridge extends AutoCloseable {
 
     void save(String collection, DBObject ref);
 
+    void update(String collection, DBObject queryDoc, DBObject updateDoc, boolean upsert, boolean multi);
+
     @Override
     void close();
 }

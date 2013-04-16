@@ -1,5 +1,6 @@
 package org.scriptella.mongodb.operation;
 
+import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
@@ -68,8 +69,12 @@ public abstract class MongoOperation {
         if (object == null) {
             return null;
         }
-        BasicDBObject o = (BasicDBObject) object;
-        return (BSONObject) o.copy();
+        if (object instanceof BasicDBList) {
+            return (BSONObject) ((BasicDBList) object).copy();
+        } else if (object instanceof BasicDBObject) {
+            return (BSONObject) ((BasicDBObject) object).copy();
+        }
+        throw new IllegalArgumentException("Type " + object.getClass() + " cannot be deep copied.");
     }
 
     public abstract void executeScript(MongoBridge mongoBridge);
@@ -95,7 +100,10 @@ public abstract class MongoOperation {
             return new DbRunCommand((DBObject) data);
         } else if ("db.collection.save".equals(name)) {
             return new DbCollectionSave((String) collection, Arrays.asList(data));
+        } else if ("db.collection.update".equals(name)) {
+            return new DbCollectionUpdate((String) collection, (DBObject) data);
         }
+
         throw new UnsupportedOperationException("Operation " + name + " is not supported");
 
     }

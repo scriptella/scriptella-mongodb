@@ -54,6 +54,22 @@
         ]
     </script>
 
+    <script connection-id="mongo">
+        <!-- Set version to 1 for both admin and guest, and then increment only for admin -->
+        [
+        {
+        operation: 'db.collection.update',
+        collection: 'test',
+        data: [{}, {$set: {version: 1}}, false, true]
+        },
+        {
+        operation: 'db.collection.update',
+        collection: 'test',
+        data: [{name: 'admin'}, {$inc: {version: 1}}]
+        }]
+
+    </script>
+
     <!-- Query for all documents in test -->
     <query connection-id="mongo">
         {
@@ -62,11 +78,13 @@
         }
         <!-- Output the results as text. Different ways of referencing properties are shown -->
         <script connection-id="log">
-            Row id=$_id Name: $name, Comments: $comments . First comment: ${comments[0]}
+            Row id=$_id Name: $name, Comments: $comments . First comment: ${comments[0]}, Version: $version
         </script>
         <!-- Example of passing data to Java classes -->
         <script connection-id="js">
-            org.scriptella.mongodb.MongoDbConnectionITest.callback(comments.get(0));
+            org.scriptella.mongodb.MongoDbConnectionITest.callback('v'+version+','+comments.get(0));
         </script>
     </query>
+
+
 </etl>

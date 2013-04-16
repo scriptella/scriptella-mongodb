@@ -4,6 +4,7 @@ import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -34,6 +35,12 @@ public class MongoMockBridge implements MongoBridge {
     public void save(String collection, DBObject ref) {
         commands.add("save");
         args.add(ref);
+    }
+
+    @Override
+    public void update(String collection, DBObject queryDoc, DBObject updateDoc, boolean upsert, boolean multi) {
+        commands.add("update");
+        args.add(Arrays.asList(queryDoc, updateDoc, upsert, multi));
     }
 
     @Override

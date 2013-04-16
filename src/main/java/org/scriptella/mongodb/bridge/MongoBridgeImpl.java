@@ -53,6 +53,15 @@ public class MongoBridgeImpl implements MongoBridge {
     }
 
     @Override
+    public void update(String collection, DBObject queryDoc, DBObject updateDoc, boolean upsert, boolean multi) {
+        if (DEBUG) {
+            LOG.fine("Executing MongoDB update for collection " + collection + ", query: " + queryDoc
+                    + ", update: " + updateDoc + ", upsert: " + upsert + ", multi: " + multi);
+        }
+        db.getCollection(collection).update(queryDoc, updateDoc, upsert, multi);
+    }
+
+    @Override
     public void close() {
         if (client != null) {
             client.close();

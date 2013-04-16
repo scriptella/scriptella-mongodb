@@ -7,6 +7,7 @@ import scriptella.execution.EtlExecutor;
 import scriptella.execution.EtlExecutorException;
 
 import java.net.URL;
+import java.util.Iterator;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -28,11 +29,14 @@ public class MongoDbConnectionITest extends AbstractTestCase {
         ex.execute();
         //Verify that messages have arrived though the {@link #callback}
         Assert.assertEquals(2, messages.size());
-        Assert.assertEquals("First post", messages.iterator().next());
+        Iterator<String> it = messages.iterator();
+        Assert.assertEquals("v1,Hello world", it.next());
+        Assert.assertEquals("v2,First post", it.next());
     }
 
     @SuppressWarnings("unused") //Called from JavaScript in xml file
     public static void callback(String msg) {
         messages.add(msg);
     }
+
 }
