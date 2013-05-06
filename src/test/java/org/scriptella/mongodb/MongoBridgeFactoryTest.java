@@ -25,4 +25,24 @@ public class MongoBridgeFactoryTest extends AbstractTestCase {
         result = MongoBridgeFactory.appendPropertiesToUrl(Collections.<String, Object>emptyMap(), url);
         Assert.assertEquals("mongodb://localhost/test", result);
     }
+
+    @Test
+    /**
+     * Test for #4 Allow passing user/password as attributes of the connection element
+     */
+    public void testPrependUserPasswordToUrl() {
+        String url = "mongodb://localhost/test";
+        String actual = MongoBridgeFactory.prependUserPasswordToUrl(url, null, null);
+        Assert.assertEquals(url, actual);
+        actual = MongoBridgeFactory.prependUserPasswordToUrl(url, "user", null);
+        Assert.assertEquals("mongodb://user@localhost/test", actual);
+        actual = MongoBridgeFactory.prependUserPasswordToUrl(url, "user", "password");
+        Assert.assertEquals("mongodb://user:password@localhost/test", actual);
+
+        //Malformed url without a protocol etc., should be returned unmodified
+        String badUrl = "localhost/test";
+        actual = MongoBridgeFactory.prependUserPasswordToUrl(badUrl, "user", "password");
+        Assert.assertEquals(badUrl, actual);
+    }
+
 }

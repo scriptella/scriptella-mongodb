@@ -4,6 +4,7 @@ import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
 import org.scriptella.mongodb.bridge.MongoBridgeImpl;
 import scriptella.spi.ConnectionParameters;
+import scriptella.util.StringUtils;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -27,7 +28,9 @@ public class MongoBridgeFactory {
         MongoClientURI uri;
         MongoClient mc;
         try {
-            uri = new MongoClientURI(appendPropertiesToUrl(parameters.getProperties(), parameters.getUrl()));
+            String modifiedUrl = appendPropertiesToUrl(parameters.getProperties(), parameters.getUrl());
+            modifiedUrl = prependUserPasswordToUrl(modifiedUrl, parameters.getUser(), parameters.getPassword());
+            uri = new MongoClientURI(modifiedUrl);
             mc = new MongoClient(uri);
             LOG.info("Initialized connection to " + uri);
         } catch (Exception e) {
@@ -62,5 +65,37 @@ public class MongoBridgeFactory {
         }
 
         return url + params;
+    }
+
+    /**
+     * Prepends user/password to the specified url if no credentials were provided in it.
+     *
+     * @param url      connection url
+     * @param user     user connection attribute
+     * @param password password connection attribute
+     * @return url with prepended credentials in a user:password@host syntax.
+     */
+    static String prependUserPasswordToUrl(String url, String user, String password) {
+        if (StringUtils.isEmpty(user) && StringUtils.isEmpty(password)) {
+            return url;
+        }
+        if (url.indexOf('@') >= 0) {
+            LOG.warning("User/password already defined in the connection URL, ignoring values from attributes");
+            return url;
+        }
+
+        int protocolInd = url.indexOf("://");
+        if (protocolInd < 0) {
+            return url;
+        }
+
+        StringBuilder credentials = new StringBuilder();
+        if (!StringUtils.isEmpty(user)) {
+            credentials.append(user);
+        }
+        if (!StringUtils.isEmpty(password)) {
+            credentials.append(':').append(password);
+        }
+        return url.substring(0, protocolInd + 3) + credentials.append('@') + url.substring(protocolInd + 3);
     }
 }
