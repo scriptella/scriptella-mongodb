@@ -1,7 +1,7 @@
 #MongoDB driver for Scriptella ETL
 
 ## Building from source
-Type `mvn clean package` to build the driver. The result jar will be in the `target` folder. 
+Java and Maven are required. Type `mvn clean package` to build the driver. The result jar will be in the `target` folder. 
 
 ##Usage example:
 
@@ -22,6 +22,8 @@ Download MongoDB driver from http://central.maven.org/maven2/org/mongodb/mongo-j
         </script>
     </query>
 
+See a [complete example of two-way migration between HSQLDB and MongoDB](https://github.com/scriptella/scriptella-examples/tree/master/mongodb).
 
 
-For additional details see [Reference documentation](https://github.com/scriptella/scriptella-mongodb/wiki/Reference).
+[Reference documentation](https://github.com/scriptella/scriptella-mongodb/wiki/Reference) provides a more detailed information about the driver.
+
