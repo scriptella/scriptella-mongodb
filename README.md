@@ -1,8 +1,13 @@
 #MongoDB driver for Scriptella ETL
 
+## Building from source
+Type `mvn clean package` to build scriptella-mongodb-driver-1.0-SNAPSHOT.jar. 
+
 ##Usage example:
 
-    <connection id="out" url="mongodb://localhost/test"/>
+Download MongoDB driver from http://central.maven.org/maven2/org/mongodb/mongo-java-driver/ and make sure the required JARs are on classpath:
+
+    <connection id="out" url="mongodb://localhost/test"  classpath="../lib/scriptella-mongodb-driver.jar:../lib/mongo-java-driver-2.10.1.jar" />
     <query connection-id="in">
         SELECT * FROM USERS
         <script connection-id="out">
