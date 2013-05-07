@@ -1,7 +1,7 @@
 #MongoDB driver for Scriptella ETL
 
 ## Building from source
-Type `mvn clean package` to build scriptella-mongodb-driver-1.0-SNAPSHOT.jar. 
+Type `mvn clean package` to build the driver. The result jar will be in the `target' folder. 
 
 ##Usage example:
 
